@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import AdminLayout from './admin/AdminLayout';
 
 const AdminDashboard = ({ language, setLanguage }) => {
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeCampaigns: 0,
+    totalDonations: 0,
+    pendingVerifications: 0,
+    reportedContent: 0,
+    systemRevenue: 0
+  });
   const [recentActivity, setRecentActivity] = useState([]);
   const [pendingVerifications, setPendingVerifications] = useState([]);
   const [reportedCampaigns, setReportedCampaigns] = useState([]);
@@ -110,48 +117,48 @@ const AdminDashboard = ({ language, setLanguage }) => {
   const t = (key) => translations[language][key];
 
   useEffect(() => {
-    // Mock admin data
-    const mockStats = {
+    // Mock admin data (instant load now)
+    setStats({
       totalUsers: 15742,
       activeCampaigns: 127,
       totalDonations: 3547289,
       pendingVerifications: 23,
       reportedContent: 8,
       systemRevenue: 354728
-    };
+    });
 
-    const mockActivity = [
+    setRecentActivity([
       {
         id: 1,
         type: 'verification',
         message: 'New verification request from John Doe',
-        time: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
+        time: new Date(Date.now() - 15 * 60 * 1000),
         severity: 'info'
       },
       {
         id: 2,
         type: 'report',
         message: 'Campaign "Help My Family" reported for suspicious content',
-        time: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+        time: new Date(Date.now() - 2 * 60 * 60 * 1000),
         severity: 'warning'
       },
       {
         id: 3,
         type: 'donation',
         message: 'Large donation (ETB 50,000) flagged for review',
-        time: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
+        time: new Date(Date.now() - 4 * 60 * 60 * 1000),
         severity: 'info'
       },
       {
         id: 4,
         type: 'campaign',
         message: 'Campaign "Medical Emergency" approved and published',
-        time: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+        time: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
         severity: 'success'
       }
-    ];
+    ]);
 
-    const mockVerifications = [
+    setPendingVerifications([
       {
         id: 1,
         userName: 'Sarah Wilson',
@@ -176,9 +183,9 @@ const AdminDashboard = ({ language, setLanguage }) => {
         submittedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
         status: 'pending'
       }
-    ];
+    ]);
 
-    const mockReports = [
+    setReportedCampaigns([
       {
         id: 1,
         campaignTitle: 'Help My Family in Crisis',
@@ -195,15 +202,7 @@ const AdminDashboard = ({ language, setLanguage }) => {
         reportedAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
         severity: 'medium'
       }
-    ];
-
-    setTimeout(() => {
-      setStats(mockStats);
-      setRecentActivity(mockActivity);
-      setPendingVerifications(mockVerifications);
-      setReportedCampaigns(mockReports);
-      setLoading(false);
-    }, 1000);
+    ]);
   }, []);
 
   const formatCurrency = (amount) => {
@@ -237,59 +236,16 @@ const AdminDashboard = ({ language, setLanguage }) => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading admin dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700">
-      {/* Header */}
-      <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-700">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-white font-bold text-2xl">
-              <span className="mr-2 text-3xl">🛡️</span>
-              {t('logo')}
-            </h1>
+    <AdminLayout language={language} setLanguage={setLanguage}>
+      {/* Page Header */}
+      <div className="mb-8">
+  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">🛡️ {t('adminDashboard')}</h1>
+  <p className="text-gray-400">{/* Could be translated if key added */}System overview and management tools</p>
+      </div>
 
-            <div className="flex items-center space-x-4">
-              <button 
-                onClick={() => setLanguage(language === 'en' ? 'am' : 'en')} 
-                className="bg-white/10 text-white px-3 py-1 rounded-full text-sm hover:bg-white/20 transition-colors"
-              >
-                {language === 'en' ? '🇪🇹 አማርኛ' : '🇺🇸 English'}
-              </button>
-              
-              <Link to="/" className="text-gray-300 hover:text-white transition-colors">
-                ← {t('backToMain')}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        
-        {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            📊 {t('adminDashboard')}
-          </h1>
-          <p className="text-gray-400">
-            System overview and management tools
-          </p>
-        </div>
-
-        {/* Statistics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+  {/* Statistics Grid */}
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-gray-600">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-gray-300 text-sm">{t('totalUsers')}</h3>
@@ -345,35 +301,34 @@ const AdminDashboard = ({ language, setLanguage }) => {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-gray-600 mb-8">
-          <h2 className="text-xl font-bold text-white mb-4">
-            ⚡ {t('quickActions')}
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              { icon: '👥', label: t('manageUsers'), color: 'bg-blue-500' },
-              { icon: '🎯', label: t('reviewCampaigns'), color: 'bg-green-500' },
-              { icon: '✅', label: t('processVerifications'), color: 'bg-orange-500' },
-              { icon: '🚨', label: t('handleReports'), color: 'bg-red-500' },
-              { icon: '⚙️', label: t('systemSettings'), color: 'bg-purple-500' },
-              { icon: '📊', label: t('generateReports'), color: 'bg-indigo-500' }
-            ].map((action, index) => (
-              <button
-                key={index}
-                className={`${action.color} hover:opacity-80 text-white p-4 rounded-lg transition-all transform hover:scale-105 text-center`}
-              >
-                <div className="text-2xl mb-2">{action.icon}</div>
-                <div className="text-sm font-medium">{action.label}</div>
-              </button>
-            ))}
-          </div>
+      {/* Quick Actions */}
+      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-gray-600 mb-8">
+        <h2 className="text-xl font-bold text-white mb-4">⚡ {t('quickActions')}</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {[
+            { icon: '👥', label: t('manageUsers'), color: 'bg-blue-500', to: '/admin/users' },
+            { icon: '🎯', label: t('reviewCampaigns'), color: 'bg-green-500', to: '/admin/campaigns' },
+            { icon: '✅', label: t('processVerifications'), color: 'bg-orange-500', to: '/admin/verifications' },
+            { icon: '🚨', label: t('handleReports'), color: 'bg-red-500', to: '/admin/reports' },
+            { icon: '⚙️', label: t('systemSettings'), color: 'bg-purple-500', to: '#' },
+            { icon: '📊', label: t('generateReports'), color: 'bg-indigo-500', to: '#' }
+          ].map((action, index) => (
+            <Link
+              key={index}
+              to={action.to}
+              className={`${action.color} hover:opacity-80 text-white p-4 rounded-lg transition-all transform hover:scale-105 text-center`}
+            >
+              <div className="text-2xl mb-2">{action.icon}</div>
+              <div className="text-sm font-medium">{action.label}</div>
+            </Link>
+          ))}
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
-          {/* Recent Activity */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-gray-600">
+  {/* Recent Activity */}
+  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-gray-600">
             <h2 className="text-xl font-bold text-white mb-4">
               📋 {t('recentActivity')}
             </h2>
@@ -394,8 +349,8 @@ const AdminDashboard = ({ language, setLanguage }) => {
             </div>
           </div>
 
-          {/* Pending Verifications */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-gray-600">
+  {/* Pending Verifications */}
+  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-gray-600">
             <h2 className="text-xl font-bold text-white mb-4">
               ⏳ {t('pendingVerificationsList')}
             </h2>
@@ -430,10 +385,10 @@ const AdminDashboard = ({ language, setLanguage }) => {
             </div>
           </div>
 
-        </div>
+  </div>
 
-        {/* Reported Campaigns */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-gray-600 mt-8">
+  {/* Reported Campaigns */}
+  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-gray-600 mt-8">
           <h2 className="text-xl font-bold text-white mb-4">
             🚨 {t('reportedCampaigns')}
           </h2>
@@ -471,10 +426,8 @@ const AdminDashboard = ({ language, setLanguage }) => {
               <p className="text-gray-400 text-center py-8">{t('noReportedCampaigns')}</p>
             )}
           </div>
-        </div>
-
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

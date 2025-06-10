@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import AuthenticatedHeader from './AuthenticatedHeader';
 
 const MessagesPage = ({ language, setLanguage }) => {
-  const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all'); // all, unread, donors, seekers
 
   const translations = {
     en: {
       messages: "Messages",
-      backToDashboard: "Back to Dashboard",
+  // backToDashboard removed (header standardized)
       searchMessages: "Search conversations...",
       allMessages: "All Messages",
       unreadOnly: "Unread Only",
@@ -38,7 +37,7 @@ const MessagesPage = ({ language, setLanguage }) => {
     },
     am: {
       messages: "መልዕክቶች",
-      backToDashboard: "ወደ ዳሽቦርድ መመለስ",
+  // backToDashboard removed
       searchMessages: "ውይይቶችን ይፈልጉ...",
       allMessages: "ሁሉም መልዕክቶች",
       unreadOnly: "ያልተነበቡ ብቻ",
@@ -68,7 +67,7 @@ const MessagesPage = ({ language, setLanguage }) => {
   const t = (key) => translations[language][key];
 
   useEffect(() => {
-    // Mock conversations data
+    // Mock conversations data (instant load)
     const mockConversations = [
       {
         id: 1,
@@ -118,10 +117,7 @@ const MessagesPage = ({ language, setLanguage }) => {
       }
     ];
 
-    setTimeout(() => {
-      setConversations(mockConversations);
-      setLoading(false);
-    }, 1000);
+  setConversations(mockConversations);
   }, []);
 
   const formatTime = (timestamp) => {
@@ -162,60 +158,27 @@ const MessagesPage = ({ language, setLanguage }) => {
 
   const totalUnreadCount = conversations.reduce((total, conv) => total + conv.unreadCount, 0);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-warm-beige via-gray-50 to-warm-gray flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading messages...</p>
-        </div>
-      </div>
-    );
-  }
+  // Removed loading spinner – messages show instantly
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-warm-beige via-gray-50 to-warm-gray">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 shadow-xl">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="text-white font-bold text-2xl animate-float">
-              <span className="mr-2 text-3xl">🤝</span>
-              {t('logo')}
-            </Link>
-
-            <div className="flex items-center space-x-3">
-              <button 
-                onClick={() => setLanguage(language === 'en' ? 'am' : 'en')} 
-                className="bg-white/10 text-white px-3 py-1 rounded-full text-sm hover:bg-white/20 transition-colors"
-              >
-                {language === 'en' ? '🇪🇹 አማርኛ' : '🇺🇸 English'}
-              </button>
-              
-              <Link to="/dashboard" className="text-white hover:text-orange-200 transition-colors">
-                ← {t('backToDashboard')}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Unified Authenticated Header */}
+      <AuthenticatedHeader language={language} setLanguage={setLanguage} />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           
           {/* Page Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-orange-500 text-transparent bg-clip-text">
-                💬 {t('messages')}
-              </h1>
-              {totalUnreadCount > 0 && (
-                <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                  {totalUnreadCount} {t('unread')}
-                </div>
-              )}
-            </div>
+          <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-orange-500 text-transparent bg-clip-text flex items-center">
+              <span className="mr-2">💬</span>{t('messages')}
+            </h1>
+            {totalUnreadCount > 0 && (
+              <div className="bg-red-500/90 backdrop-blur text-white px-4 py-2 rounded-full text-sm font-semibold shadow">
+                {totalUnreadCount} {t('unread')}
+              </div>
+            )}
           </div>
 
           {/* Search and Filters */}

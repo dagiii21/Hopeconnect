@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import PublicHeader from './PublicHeader';
+import AuthenticatedHeader from './AuthenticatedHeader';
 import Footer from './Footer';
 
 const CampaignsPage = ({ language, setLanguage }) => {
@@ -174,8 +174,8 @@ const CampaignsPage = ({ language, setLanguage }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-warm-beige via-gray-50 to-warm-gray">
-      {/* Header */}
-      <PublicHeader language={language} setLanguage={setLanguage} />
+  {/* Header (Dashboard style) */}
+  <AuthenticatedHeader language={language} setLanguage={setLanguage} />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">

@@ -13,6 +13,11 @@ import VerificationPage from './components/VerificationPage';
 import ProfilePage from './components/ProfilePage';
 import SettingsPage from './components/SettingsPage';
 import AdminDashboard from './components/AdminDashboard';
+import AdminCampaignsPage from './components/admin/AdminCampaignsPage';
+import AdminVerificationsPage from './components/admin/AdminVerificationsPage';
+import AdminReportsPage from './components/admin/AdminReportsPage';
+import AdminUsersPage from './components/admin/AdminUsersPage';
+import AdminSupportPage from './components/admin/AdminSupportPage';
 import SupportPage from './components/SupportPage';
 import AboutPage from './components/AboutPage';
 import CampaignsPage from './components/CampaignsPage';
@@ -78,6 +83,26 @@ const App = () => {
         <Route 
           path="/admin" 
           element={<AdminDashboard language={language} setLanguage={setLanguage} />} 
+        />
+        <Route
+          path="/admin/campaigns"
+          element={<AdminCampaignsPage language={language} setLanguage={setLanguage} />}
+        />
+        <Route
+          path="/admin/verifications"
+          element={<AdminVerificationsPage language={language} setLanguage={setLanguage} />}
+        />
+        <Route
+          path="/admin/reports"
+          element={<AdminReportsPage language={language} setLanguage={setLanguage} />}
+        />
+        <Route
+          path="/admin/users"
+          element={<AdminUsersPage language={language} setLanguage={setLanguage} />}
+        />
+        <Route
+          path="/admin/support"
+          element={<AdminSupportPage language={language} setLanguage={setLanguage} />}
         />
         <Route 
           path="/support" 
